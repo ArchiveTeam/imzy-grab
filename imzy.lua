@@ -19,9 +19,14 @@ for ignore in io.open("ignore-list", "r"):lines() do
 end
 
 ids[item_value] = true
+if item_type == "post" then
+  ids[string.match(item_value, "^[^:]+:(.+)$")] = true
+end
 
 local discotags = {}
 local img_prefix = nil
+
+local prev_apis = {}
 
 read_file = function(file)
   if file then
@@ -138,7 +143,11 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if string.match(url, "https?://[^/]*imzy%.com/api/accounts/profiles/[^/]+/[^%?]+%?page=[0-9]+&per_page=[0-9]+")
        and html ~= "[]" then
       local page = string.match(url, "https?://[^/]*imzy%.com/api/accounts/profiles/[^/]+/[^%?]+%?page=([0-9]+)&per_page=[0-9]+")
-      check(string.gsub(url, "%?page=[0-9]+", "?page=" .. page + 1))
+      local sort = string.match(url, "https?://[^/]*imzy%.com/api/accounts/profiles/[^/]+/([^%?]+)%?page=[0-9]+&per_page=[0-9]+")
+      if prev_apis[sort] ~= html then
+        check(string.gsub(url, "%?page=[0-9]+", "?page=" .. page + 1))
+      end
+      prev_apis[sort] = html
     else
       for newurl in string.gmatch(html, '([^"]+)') do
         checknewurl(newurl)

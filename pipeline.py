@@ -58,7 +58,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20170612.01"
+VERSION = "20170620.01"
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'imzy'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -119,7 +119,7 @@ class PrepareDirectories(SimpleTask):
         os.makedirs(dirname)
 
         item["item_dir"] = dirname
-        item["warc_file_base"] = "%s-%s-%s" % (self.warc_prefix, escaped_item_name,
+        item["warc_file_base"] = "%s-%s-%s" % (self.warc_prefix, escaped_item_name[:50],
             time.strftime("%Y%m%d-%H%M%S"))
 
         open("%(item_dir)s/%(warc_file_base)s.warc.gz" % item, "w").close()
@@ -206,6 +206,8 @@ class WgetArgs(object):
                 wget_args.append('https://www.imzy.com/api/accounts/profiles/{item_value}/comments?page={i}&per_page=25'.format(i=i, item_value=item_value))
                 wget_args.append('https://www.imzy.com/api/accounts/profiles/{item_value}/posts?page={i}&per_page=25'.format(i=i, item_value=item_value))
                 wget_args.append('https://www.imzy.com/api/accounts/profiles/{item_value}/communities?page={i}&per_page=25'.format(i=i, item_value=item_value))
+        elif item_type == 'post':
+            wget_args.append('https://www.imzy.com/{s}'.format(s='/post/'.join(item_value.split(':', 1))))
         else:
             raise Exception('Unknown item')
 
