@@ -149,6 +149,18 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
       prev_apis[sort] = html
     else
+      if item_type == "post"
+         and string.match(url, "/[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$") then
+        local post_id = string.match(url, "/([0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+)$")
+        local url_part = string.gsub(item_value, ":", "/posts/")
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?check=true")
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id)
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?per_page=25")
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?sort=popular&per_page=25")
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?sort=new&per_page=25")
+        check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?sort=old&per_page=25")
+      end
+
       for newurl in string.gmatch(html, '([^"]+)') do
         checknewurl(newurl)
       end
@@ -188,6 +200,10 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if abortgrab == true then
     io.stdout:write("ABORTING...\n")
     return wget.actions.ABORT
+  end
+
+  if string.match(url["url"], "%?check=true")  and status_code == 206 then
+    return wget.actions.EXIT
   end
   
   if status_code >= 500 or

@@ -58,7 +58,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20170620.01"
+VERSION = "20170620.02"
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'imzy'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -208,6 +208,13 @@ class WgetArgs(object):
                 wget_args.append('https://www.imzy.com/api/accounts/profiles/{item_value}/communities?page={i}&per_page=25'.format(i=i, item_value=item_value))
         elif item_type == 'post':
             wget_args.append('https://www.imzy.com/{s}'.format(s='/post/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/no-auth/{s}?check=true'.format(s='/posts/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/{s}?check=true'.format(s='/posts/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/{s}/comments?per_page=25'.format(s='/posts/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/{s}/comments?sort=new&per_page=25'.format(s='/posts/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/{s}/comments?sort=oldest&per_page=25'.format(s='/posts/'.join(item_value.split(':', 1))))
+            wget_args.append('https://www.imzy.com/api/communities/{s}/comments?sort=old&per_page=25'.format(s='/posts/'.join(item_value.split(':', 1))))
+
         else:
             raise Exception('Unknown item')
 
