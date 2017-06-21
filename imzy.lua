@@ -44,7 +44,8 @@ allowed = function(url, parenturl)
      or string.match(url, "[<>\\]")
      or string.match(url, "//$")
      or string.match(url, "^https?://[^/]*facebook%.com")
-     or string.match(url, "^https?://[^/]*twitter%.com") then
+     or string.match(url, "^https?://[^/]*twitter%.com")
+     or string.match(url, "/comment/[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+") then
     return false
   end
 
@@ -150,8 +151,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       prev_apis[sort] = html
     else
       if item_type == "post"
-         and string.match(url, "/[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$") then
-        local post_id = string.match(url, "/([0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+)$")
+         and string.match(url, "/[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+$") then
+        local post_id = string.match(url, "/([0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+%-[0-9a-f]+)$")
         local url_part = string.gsub(item_value, ":", "/posts/")
         check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id .. "?check=true")
         check("https://www.imzy.com/api/communities/" .. url_part .. "/comments/" .. post_id)
